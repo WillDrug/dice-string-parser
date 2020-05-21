@@ -26,4 +26,9 @@ func TestParse(t *testing.T) {
 	if (parsed.rolls[2].dice != 1 || parsed.rolls[2].num != 5 || parsed.rolls[2].total != 1) {
 		t.Error("Roll 3 failed")
 	}
+	_, err = Parse("#roll 1d100b180l280e90f5 - 1d100b160l280e90f5"[5:])
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 }

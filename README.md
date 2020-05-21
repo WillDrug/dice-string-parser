@@ -22,3 +22,4 @@ Dice string currently supports the following:
 ## Go MOD
 Pushed tag v0.0.6 with getters
 Pushed tag v0.0.7 with BONUS, MALUS, EXPLODE and BOTCH
+hotfix v0.0.8
