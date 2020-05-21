@@ -11,6 +11,9 @@ func TestParse(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	if (parsed.Rolls()[0].total != parsed.rolls[0].total) {
+		t.Error("Methods failed")
+	}
 	if (parsed.arithmetic[0] != -1 || parsed.arithmetic[1] != 1) {
 		t.Error("Arithmetic failed")
 	}

@@ -22,6 +22,11 @@ type RollParse struct {
 	total		int
 }
 
+func (rp RollParse) Arithmetic() []int {return rp.arithmetic}
+func (rp RollParse) Dstring() string {return rp.dstring}
+func (rp RollParse) Rolls() []Roll {return rp.rolls}
+func (rp RollParse) Total() int {return rp.total}
+
 type Roll struct{
 	num  		int
 	dice 		int
@@ -32,6 +37,15 @@ type Roll struct{
 	rolls 		[]int
 	discarded   []int
 }
+
+func (r Roll) Num() int {return r.num}
+func (r Roll) Dice() int {return r.dice}
+func (r Roll) Keep() (int, bool) {return r.keep, r.keep_high}
+func (r Roll) Lim() int {return r.lim}
+func (r Roll) Total() int {return r.total}
+func (r Roll) Rolls() []int {return r.rolls}
+func (r Roll) Discarded() []int {return r.discarded}
+
 
 func Parse(dstring string) (RollParse, error) {
 	// 
