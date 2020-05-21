@@ -1,3 +1,3 @@
-module github.com/WillDrug/diceparser
+module github.com/WillDrug/dice-string-parser
 
 go 1.14
