@@ -18,4 +18,4 @@ Dice string currently supports the following:
 * `l` flag for several rolls, like `(1d100+120)l200`
 
 ## Go MOD
-Pushed tag v0.0.5 with getters
+Pushed tag v0.0.5 with getters!
