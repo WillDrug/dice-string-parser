@@ -28,6 +28,7 @@ func (rp RollParse) Rolls() []Roll {return rp.rolls}
 func (rp RollParse) Total() int {return rp.total}
 
 type Roll struct{
+	rstring		string
 	num  		int
 	dice 		int
 	keep 		int
@@ -38,6 +39,7 @@ type Roll struct{
 	discarded   []int
 }
 
+func (r Roll) Rstring() string {return r.rstring}
 func (r Roll) Num() int {return r.num}
 func (r Roll) Dice() int {return r.dice}
 func (r Roll) Keep() (int, bool) {return r.keep, r.keep_high}
@@ -125,7 +127,7 @@ func Rollify(rstring string) (Roll, error) {
     }
     // crate struct
     var roll Roll
-    roll = Roll{0, 1, 0, true, 0, 0, nil, nil}
+    roll = Roll{rstring, 0, 1, 0, true, 0, 0, nil, nil}
     // turn capture groups into struct fields
     // num, dice, keep, keep_high, lim, total
     var nv int64
