@@ -38,7 +38,6 @@ type Roll struct{
 	rolls 		[]int
 	discarded   []int
 }
-
 func (r Roll) Rstring() string {return r.rstring}
 func (r Roll) Num() int {return r.num}
 func (r Roll) Dice() int {return r.dice}
