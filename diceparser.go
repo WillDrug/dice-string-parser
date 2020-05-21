@@ -11,9 +11,11 @@ import (
 	"sync"
 )
 
+// todo: comprehensive logging
+
 var onlyOnce sync.Once
 var dstring string
-var re = regexp.MustCompile("^(?P<num>\\d+)(d(?P<dice>\\d+)((kh(?P<kh>\\d+))|(kl(?P<kl>\\d+))?)?)?(l(?P<lim>\\d+))?$")
+var re = regexp.MustCompile("^(?P<num>\\d+)(d(?P<dice>\\d+)((kh(?P<kh>\\d+))|(kl(?P<kl>\\d+))?)?)?(b(?P<bonus>\\d+))?(m(?P<malus>\\d+))?(l(?P<lim>\\d+))?(e(?P<explode>\\d+))?(f(?P<botch>\\d+))?$")
 
 type RollParse struct {
 	dstring 	string
@@ -33,15 +35,24 @@ type Roll struct{
 	dice 		int
 	keep 		int
 	keep_high   bool
+	bonus		int
+	malus		int
+	explode		int
+	botch		int
 	lim 		int
 	total		int	
 	rolls 		[]int
 	discarded   []int
 }
+
 func (r Roll) Rstring() string {return r.rstring}
 func (r Roll) Num() int {return r.num}
 func (r Roll) Dice() int {return r.dice}
 func (r Roll) Keep() (int, bool) {return r.keep, r.keep_high}
+func (r Roll) Bonus() int {return r.bonus}
+func (r Roll) Malus() int {return r.malus}
+func (r Roll) Botch() int {return r.botch}
+func (r Roll) Explode() int {return r.explode}
 func (r Roll) Lim() int {return r.lim}
 func (r Roll) Total() int {return r.total}
 func (r Roll) Rolls() []int {return r.rolls}
@@ -126,7 +137,7 @@ func Rollify(rstring string) (Roll, error) {
     }
     // crate struct
     var roll Roll
-    roll = Roll{rstring, 0, 1, 0, true, 0, 0, nil, nil}
+    roll = Roll{rstring, 0, 1, 0, true, 0, 0, 0, 0, 0, 0, nil, nil}
     // turn capture groups into struct fields
     // num, dice, keep, keep_high, lim, total
     var nv int64
@@ -151,6 +162,14 @@ func Rollify(rstring string) (Roll, error) {
 	    		roll.dice = int(nv)
 	    	case "lim":
 	    		roll.lim = int(nv)
+	    	case "bonus":
+	    		roll.bonus = int(nv)
+	    	case "malus":
+	    		roll.malus = int(nv)
+	    	case "explode":
+	    		roll.explode = int(nv)
+	    	case "botch":
+	    		roll.botch = int(nv)
 	    }
     }
     // todo: move all the separate dice functions to code functions
@@ -161,7 +180,7 @@ func Rollify(rstring string) (Roll, error) {
     } else {
     	roll.rolls = make([]int, roll.num)
     	for i:=0;i<roll.num;i++ {
-	    	roll.rolls[i] = RollDice(roll.dice)
+	    	roll.rolls[i] = RollDice(roll.dice, roll.explode, roll.botch)
 	    }
 	}
     if (roll.keep > 0 && roll.dice > 1) {
@@ -183,13 +202,15 @@ func Rollify(rstring string) (Roll, error) {
     for _, v := range roll.rolls {
     	roll.total += v
     }
+    roll.total += roll.bonus
+    roll.total -= roll.malus
     if (roll.total > roll.lim && roll.lim > 0) {
     		roll.total = roll.lim
 	}
     return roll, nil
 }
 
-func RollDice(sides int) int {
+func RollDice(sides int, explode int, botch int) int {
 	// edge case
 	if (sides == 1) {
 		return 1
@@ -199,7 +220,20 @@ func RollDice(sides int) int {
  		rand.Seed(time.Now().UnixNano()) // only run once
  	})
 	// todo: add some fairness
-	return rand.Intn(sides)+1
+	var roll int
+	var ret int
+	roll = rand.Intn(sides)+1
+	ret = roll
+	// todo: add different botch and explode mechanics
+	if (ret <= botch) {
+		return -rand.Intn(sides)-1
+	}
+	for (explode > 0 && roll >= explode) {
+		roll = rand.Intn(sides)+1
+		ret += roll
+	}
+
+	return ret
 }
 
 func Validate(rstring string) bool {
