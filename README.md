@@ -16,3 +16,6 @@ Dice string currently supports the following:
 ## TODO
 * `e` and `b` flags for *explode* and *botch*
 * `l` flag for several rolls, like `(1d100+120)l200`
+
+## Go MOD
+Pushed tag v1.0.0
