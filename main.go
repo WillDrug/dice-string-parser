@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 	"sync"
 )
@@ -51,6 +52,8 @@ func Parse(dstring string) (RollParse, error) {
 	// ((2d14 + 4d3kh1 - 2d8kl2 + 120)l300 * 10)l1000 + (something) - (rather)
 	// example string for the current idea:
 	// 1d20+5d10kh1l100+120
+	// first we dispose of all the spaces
+	dstring = strings.ReplaceAll(dstring, " ", "")
 	var rp RollParse
 	var err error
 	rp = RollParse{dstring, make([]int, 0), make([]Roll, 0), 0}
